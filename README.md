@@ -4,8 +4,7 @@
 
 This library provides a single macro `GetSet`, which allows you to write rudimentary getters and setters for your struct. 
 
-I wrote this because I was tired of manually writing them(). In most cases, you would not need getters and setters which are this primitive but **I** was needed them (and also "muh proc-macros").
-`¯\_(ツ)_/¯`
+I wrote this because I was tired of manually writing them. In most cases, you would not need getters and setters which are this primitive but I needed them (and also "muh proc-macros" `¯\_(ツ)_/¯`).
 
 If you find a bug or have a feature which seems like a good fit, feel free to contribute.
 
@@ -51,6 +50,7 @@ impl Foo {
 ```
 ## Remarks
 - Each field can only have atmost **one** `#[get(..)]` attribute and atmost **one** `#[set]` attibute. 
+
   So, This is fine  
 
     ```rust
@@ -131,7 +131,7 @@ pub fn get_waldo_funk(&mut self) -> f32 {
 ... 
 ```
 
-- I only added this, because i find myself often needing getters which call a single method on a field and return that valu- I only added this, because i find myself often needing getters which call a single method on a field and return that resulting value (*See the example*)
+- I only added this, because i find myself often needing getters which call a single method on a field and return that value (*See the example*)
 - Probably do not use if you need to do more than **one** line of processing on the field value (or use it if you are lazy like me :D)
 
 
