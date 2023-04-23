@@ -2,6 +2,10 @@
 name = "on_your_marks"
 version = "0.1.0"
 edition = "2021"
+authors = ["CeNiEi"]
+description = "Getters and Setters for Rust"
+repository = "https://github.com/CeNiEi/on_your_marks"
+keywords = ["getters", "setters", "procedural_macros"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
