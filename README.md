@@ -131,6 +131,14 @@ pub fn get_waldo_funk(&mut self) -> f32 {
 ... 
 ```
 
+# Remarks
+- This is the only argument which can occur more than once.
+- `funky` takes : 
+    - identifier which will be used to create the name of the getter, 
+    - then, the `::` symbol
+    - then, an optional `mut` keyword which specifies if the reciever is `&mut self` or `&self`
+    - then, the `=>` symbol
+    - then, the return type of the getter
 - I only added this, because i find myself often needing getters which call a single method on a field and return that value (*See the example*)
 - Probably do not use if you need to do more than **one** line of processing on the field value (or use it if you are lazy like me :D)
 
