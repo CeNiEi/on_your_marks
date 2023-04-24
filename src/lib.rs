@@ -5,7 +5,7 @@ use proc_macro2::Ident;
 use quote::quote;
 use syn::{
     parse::ParseStream, parse_macro_input, punctuated::Punctuated, spanned::Spanned, Fields,
-    ItemStruct, Meta, Token, Type, Visibility,
+    ItemStruct, Meta, Token, Type,
 };
 
 #[proc_macro_derive(GetSet, attributes(get, set))]
@@ -51,7 +51,6 @@ fn validate_get_args(attrs: &Punctuated<GetArgs, Token![,]>) -> Option<&'static 
 
 fn transform_get(
     attrs: &Punctuated<GetArgs, Token![,]>,
-    vis: &Visibility,
     field_name: &Ident,
     ty: &Type,
 ) -> syn::Result<Vec<proc_macro2::TokenStream>> {
@@ -69,7 +68,7 @@ fn transform_get(
             GetArgs::Copy => {
                 let method_name = Ident::new(&format!("get_{}", field_name), field_name.span());
                 quote!(
-                #vis fn #method_name(&self) -> #ty {
+                pub fn #method_name(&self) -> #ty {
                    self.#field_name
                    }
                 )
@@ -77,7 +76,7 @@ fn transform_get(
             GetArgs::Clone => {
                 let method_name = Ident::new(&format!("get_{}", field_name), field_name.span());
                 quote!(
-                    #vis fn #method_name(&self) -> #ty {
+                    pub fn #method_name(&self) -> #ty {
                         self.#field_name.clone()
                     }
                 )
@@ -85,7 +84,7 @@ fn transform_get(
             GetArgs::ImRef(ret_ty) => {
                 let method_name = Ident::new(&format!("get_{}_ref", field_name), field_name.span());
                 quote!(
-                    #vis fn #method_name(&self) -> #ret_ty {
+                    pub fn #method_name(&self) -> #ret_ty {
                         self.#field_name.as_ref()
                     }
                 )
@@ -94,7 +93,7 @@ fn transform_get(
                 let method_name =
                     Ident::new(&format!("get_{}_ref_mut", field_name), field_name.span());
                 quote!(
-                    #vis fn #method_name(&self) -> #ret_ty {
+                    pub fn #method_name(&self) -> #ret_ty {
                         self.#field_name.as_mut()
                     }
                 )
@@ -107,14 +106,14 @@ fn transform_get(
 
                 if !funky.mut_get {
                     quote!(
-                    #vis fn #method_name(&self) -> #ret_ty {
+                    pub fn #method_name(&self) -> #ret_ty {
                         let #field_name = &self.#field_name;
                         let __res = { #from };
                         __res
                     })
                 } else {
                     quote!(
-                    #vis fn #method_name(&mut self) -> #ret_ty {
+                    pub fn #method_name(&mut self) -> #ret_ty {
                         let #field_name = &mut self.#field_name;
                         let __res = { #from };
                         __res
@@ -129,7 +128,6 @@ fn process_fields(fields: &Fields) -> syn::Result<Vec<proc_macro2::TokenStream>>
     fields
         .iter()
         .try_fold(vec![], |mut final_tokens, f| -> syn::Result<_> {
-            let vis = &f.vis;
             let field_name = f.ident.as_ref().unwrap();
             let ty = &f.ty;
 
@@ -153,7 +151,7 @@ fn process_fields(fields: &Fields) -> syn::Result<Vec<proc_macro2::TokenStream>>
                     return Err(syn::Error::new(f.span(), err));
                 }
 
-                token_vec.extend(transform_get(&get_args, vis, field_name, ty)?);
+                token_vec.extend(transform_get(&get_args, field_name, ty)?);
             }
 
             if let Some(attr) = f.attrs.iter().find(|a| a.path.is_ident("set")) {
@@ -163,7 +161,7 @@ fn process_fields(fields: &Fields) -> syn::Result<Vec<proc_macro2::TokenStream>>
                 }
                 let method_name = Ident::new(&format!("set_{}", field_name), attr.span());
                 token_vec.push(quote!(
-                    #vis fn #method_name(&mut self, value: #ty) {
+                    pub fn #method_name(&mut self, value: #ty) {
                         self.#field_name = value;
                     }
                 ))

@@ -31,16 +31,16 @@ These should effectively translate to:
 
 ```rust
 impl Foo {
-    fn get_bar(&self) -> String {
+    pub fn get_bar(&self) -> String {
         self.bar.clone()
     }
     pub fn get_baz(&self) -> String {
         self.baz.clone()
     }
-    fn get_qux_ref(&self) -> &Path {
+    pub fn get_qux_ref(&self) -> &Path {
         self.qux.as_ref()
     }
-    fn get_qux_ref_mut(&self) -> &mut Path {
+    pub fn get_qux_ref_mut(&self) -> &mut Path {
         self.qux.as_mut()
     }
     pub fn set_quux(&mut self, value: Option<u64>) {
@@ -59,7 +59,9 @@ impl Foo {
     corge: i32
     ...
     ```
+
     This is not!
+
     ```rust
     ...
     #[get(clone)]
@@ -76,6 +78,7 @@ impl Foo {
 - If the Argument is either `copy` or `clone`, the name of the getter will simply be `get_<field_name>`, where `<field_name>` is replaced by the name of the field on which the attribute is present. (*See the above example*)
 - Similarly Argument is `im_ref`, the name of the getter will be `get_<field_name>_ref`, and `get_<field_name>_ref_mut` in case of `mut_ref`
 - Attribute `#[set]` does not take any arguments and the name of the setter generated is `set_<field_name>`.
+- All the methods generated have `pub` visibility.
 
 --- 
 ## Funky 
@@ -95,10 +98,10 @@ These effectively translate to:
 
 ```rust
 ...
-fn get_grault_opt(&self) -> Option<i32> {
+pub fn get_grault_opt(&self) -> Option<i32> {
     self.grault.ok()
 }
-fn get_garply_mut_opt(&mut self) -> Option<&mut i32> {
+pub fn get_garply_mut_opt(&mut self) -> Option<&mut i32> {
     self.garply.as_mut()
 }
 ...
